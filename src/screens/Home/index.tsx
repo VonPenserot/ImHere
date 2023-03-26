@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   ScrollView,
   Text,
@@ -11,26 +12,24 @@ import { Participant } from "../components/Participant";
 import { styles } from "./style";
 
 export function Home() {
-  const participants = [
-    "Rodrigo",
-    "Vini",
-    "Diego",
-    "Biro",
-    "Ana",
-    "Isa",
-    "Jack",
-    "Mayk",
-    "João",
-    "",
-  ];
+  const [participants, setParticipants] = useState<string[]>([]);
+  const [participantName, setParticipantName] = useState("");
 
   function handleParticipantAdd() {
-    if (participants.includes("Rodrigo")) {
+    if (participantName === "") return;
+    if (participants.includes(participantName)) {
       return Alert.alert(
         "Participante existe",
         "Já existe um participante na lista com este nome."
       );
     }
+
+
+    setParticipants((prevParticipants) => [
+      ...prevParticipants,
+      participantName,
+    ]);
+    setParticipantName("");
   }
 
   function handleParticipantRemove(name: string) {
@@ -51,6 +50,8 @@ export function Home() {
           style={styles.input}
           placeholder="Nome do participante"
           placeholderTextColor="#6B6B6B"
+          value={participantName}
+          onChangeText={setParticipantName}
         />
 
         <TouchableOpacity style={styles.button} onPress={handleParticipantAdd}>
@@ -61,9 +62,9 @@ export function Home() {
       <FlatList
         data={participants} // [] if empty it will show the ListEmptyComponent
         keyExtractor={(item) => item}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <Participant
-            key={item}
+            key={index}
             name={item}
             onRemove={() => handleParticipantRemove(item)}
           />
